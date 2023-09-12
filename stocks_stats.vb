@@ -1,24 +1,15 @@
-'returns a total count of rows in Sheet with data
-Function GetRowCount()
-    Dim lastRow As Long
-    With ActiveSheet
-        lastRow = .Cells(.Rows.Count, "A").End(xlUp).Row
-    End With
-    GetRowCount = lastRow
-End Function
-
 Sub StockStats()
-    Dim openPrice, closePrice, yearlyChange As Double
+    Dim openPrice, closePrice, yearlyChange, greatestIncrease As Double
     Dim totalVolume As LongLong
     'Create summary headers
     Range("I1").Value = "Ticker"
     Range("J1").Value = "Yearly Change"
     Range("K1").Value = "Percent Change"
     Range("L1").Value = "Total Stock Volume"
-    numRows = GetRowCount()
+    numRows = Cells(Rows.Count, "A").End(xlUp).Row
     startRow = 2
     summaryIndex = 2
-    totalVolume = 0
+    totalVolume = greatestIncrease = 0
     'set first open price for the first ticker in Sheet
     openPrice = Cells(startRow, 3).Value
     For i = startRow To numRows
@@ -54,5 +45,11 @@ Sub StockStats()
             totalVolume = totalVolume + Cells(i, 7).Value
         End If
     Next i
+    'find greatest increase
+    Range("P2").NumberFormat = "0.00%"
+    Range("P3").NumberFormat = "0.00%"
+    Range("P2").Value = WorksheetFunction.Max(Range("K2:K" & summaryIndex))
+    Range("P3").Value = WorksheetFunction.Min(Range("K2:K" & summaryIndex))
+    Range("P4").Value = WorksheetFunction.Max(Range("L2:L" & summaryIndex))
 End Sub
 
