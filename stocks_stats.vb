@@ -1,4 +1,62 @@
-Sub StockStats()
+Sub Main()
+    Dim wsCount As Integer
+    Dim i As Integer
+    ' Set WS_Count equal to the number of worksheets in the active
+    ' workbook.
+    wsCount = ActiveWorkbook.Worksheets.Count
+    ' Begin the loop.
+    For i = 1 To wsCount
+        Worksheets(i).Activate
+       doStats
+       getSummary
+    Next i
+    MsgBox ("Finished")
+End Sub
+Sub getSummary()
+    'find the summary
+    Dim i, k, numRows, greatestIncrease, greatestDecrease As Double
+    Dim greatestVolume As LongLong
+    Dim tickerMax, tickerMin As String
+    numRows = Cells(Rows.Count, "J").End(xlUp).Row
+    greatestIncrease = Range("K2").Value
+    greatestDecrease = Range("K2").Value
+    tickerMax = Range("I2").Value
+    tickerMin = Range("I2").Value
+    tickerMaxVolume = Range("I2").Value
+    greatestVolume = Range("L2").Value
+    For i = 2 To numRows
+        If greatestIncrease < Range("K" & i + 1).Value Then
+            greatestIncrease = Range("K" & i + 1).Value
+            tickerMax = Range("I" & i + 1).Value
+        End If
+        If greatestDecrease > Range("K" & i + 1).Value Then
+            greatestDecrease = Range("K" & i + 1).Value
+            tickerMin = Range("I" & i + 1).Value
+        End If
+        If greatestVolume < Range("L" & i + 1).Value Then
+            greatestVolume = Range("L" & i + 1).Value
+            tickerMaxVolume = Range("I" & i + 1).Value
+        End If
+    Next i
+    'write summary
+    'create headers
+    Range("P1").Value = "Ticker"
+    Range("Q1").Value = "Value"
+    Range("O2").Value = "Greatest % Increase"
+    Range("O3").Value = "Greatest % Decrease"
+    Range("O4").Value = "Greatest Total Volume"
+    'format cells
+    Range("Q2").NumberFormat = "0.00%"
+    Range("Q3").NumberFormat = "0.00%"
+    Range("P2").Value = tickerMax
+    Range("P3").Value = tickerMin
+    Range("P4").Value = tickerMaxVolume
+    Range("Q2").Value = greatestIncrease
+    Range("Q3").Value = greatestDecrease
+    Range("Q4").Value = greatestVolume
+End Sub
+
+Sub doStats()
     Dim openPrice, closePrice, yearlyChange, greatestIncrease As Double
     Dim totalVolume As LongLong
     'Create summary headers
@@ -45,11 +103,8 @@ Sub StockStats()
             totalVolume = totalVolume + Cells(i, 7).Value
         End If
     Next i
-    'find greatest increase
-    Range("P2").NumberFormat = "0.00%"
-    Range("P3").NumberFormat = "0.00%"
-    Range("P2").Value = WorksheetFunction.Max(Range("K2:K" & summaryIndex))
-    Range("P3").Value = WorksheetFunction.Min(Range("K2:K" & summaryIndex))
-    Range("P4").Value = WorksheetFunction.Max(Range("L2:L" & summaryIndex))
+    
 End Sub
+
+
 
