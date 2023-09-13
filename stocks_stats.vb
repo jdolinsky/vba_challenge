@@ -12,6 +12,8 @@ Sub Main()
     Next i
     MsgBox ("Finished")
 End Sub
+
+'this sub prints out the greatest increase/decrease and volume
 Sub getSummary()
     'find the summary
     Dim i, k, numRows, greatestIncrease, greatestDecrease As Double
